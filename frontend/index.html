@@ -1,0 +1,227 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>HireWise</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Instrument+Serif&family=Manrope:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="ambient ambient-a"></div>
+    <div class="ambient ambient-b"></div>
+
+    <div class="shell">
+      <header class="topbar">
+        <div class="brand">
+          <div class="brand-mark" aria-hidden="true"><span></span></div>
+          <div class="brand-copy">
+            <strong>HireWise</strong>
+            <small>Offer verification assistant</small>
+          </div>
+        </div>
+
+        <button id="themeToggle" class="theme-toggle" aria-label="Toggle theme">
+          ◐
+        </button>
+      </header>
+
+      <main class="layout">
+        <section class="hero-card">
+          <div class="hero-copy">
+            <span class="eyebrow">Job offer safety</span>
+            <h1>Check the offer<br /> before you trust it.</h1>
+            <p>
+              Spot suspicious hiring patterns, review the risk clearly, and
+              generate a professional verification message before you share
+              documents or money.
+            </p>
+
+            <div class="hero-points">
+              <div class="point">
+                <strong>Detect risk signals</strong>
+                <span
+                  >Flags payment requests, urgency language, and suspicious
+                  domains.</span
+                >
+              </div>
+              <div class="point">
+                <strong>Understand the result</strong>
+                <span
+                  >See score, verdict, and a simple explanation of what was
+                  found.</span
+                >
+              </div>
+              <div class="point">
+                <strong>Verify quickly</strong>
+                <span
+                  >Copy a ready-to-send message and confirm directly with the
+                  employer.</span
+                >
+              </div>
+            </div>
+          </div>
+
+          <aside class="trust-panel">
+            <div class="mini-stat">
+              <span class="mini-label">Purpose</span>
+              <strong>Reduce scam risk</strong>
+            </div>
+            <div class="trust-box">
+              <span class="card-topline">What it checks</span>
+              <ul>
+                <li>Upfront fee requests</li>
+                <li>Pressure tactics</li>
+                <li>Generic greetings</li>
+                <li>Unofficial email domains</li>
+              </ul>
+            </div>
+          </aside>
+        </section>
+
+        <section class="workspace">
+          <div class="input-panel">
+            <div class="section-head">
+              <div>
+                <h2>Paste your offer letter</h2>
+                <p>
+                  Paste the full message or offer text below to scan for common
+                  fraud signals.
+                </p>
+              </div>
+              <span class="status-pill">Live analysis</span>
+            </div>
+
+            <textarea
+              id="offerText"
+              placeholder="Paste the offer letter here..."
+            ></textarea>
+
+            <div class="sample-buttons">
+              <button class="sample-btn" data-type="fake">Fake Offer</button>
+              <button class="sample-btn" data-type="borderline">
+                Borderline
+              </button>
+              <button class="sample-btn" data-type="legit">Legit Offer</button>
+            </div>
+
+            <button id="analyzeBtn" class="analyze-btn">Analyze Offer</button>
+            <p class="inline-note">
+              Use sample letters if you want to test the UI quickly.
+            </p>
+          </div>
+
+          <aside class="side-panel">
+            <div class="tip-card">
+              <span class="tip-kicker">Quick advice</span>
+              <h3>Never pay to get hired</h3>
+              <p>
+                Real employers do not ask candidates to pay security deposits,
+                registration fees, or laptop fees before joining.
+              </p>
+            </div>
+
+            <div class="tip-card subtle">
+              <span class="tip-kicker">Before you accept</span>
+              <h3>Verify with the company</h3>
+              <p>
+                Match the sender email with the company domain and confirm the
+                offer using a number or email listed on the official website.
+              </p>
+            </div>
+          </aside>
+        </section>
+
+        <section id="loadingState" class="loading hidden">
+          <div class="spinner"></div>
+          <p>Scanning the letter for red flags...</p>
+        </section>
+
+        <section id="resultsSection" class="results hidden">
+          <div id="verdictBanner" class="verdict-banner"></div>
+
+          <div class="results-top">
+            <div id="scoreCard" class="score-card">
+              <span class="card-topline">Confidence score</span>
+              <div id="scoreValue" class="score-value">--</div>
+              <div class="meter">
+                <div id="scoreFill" class="meter-fill"></div>
+              </div>
+              <p id="scoreLabel" class="score-label">Waiting for analysis...</p>
+            </div>
+
+            <div class="summary-card">
+              <span class="card-topline">Summary</span>
+              <h3>Quick view</h3>
+
+              <div class="summary-row">
+                <span>Detected email</span>
+                <strong id="detectedEmailValue">—</strong>
+              </div>
+              <div class="summary-row">
+                <span>Detected domain</span>
+                <strong id="detectedDomainValue">—</strong>
+              </div>
+              <div class="summary-row">
+                <span>Risk summary</span>
+                <strong id="riskSummaryValue">—</strong>
+              </div>
+            </div>
+          </div>
+
+          <div class="flags-wrap">
+            <div class="section-head compact">
+              <div>
+                <h3>Detected red flags</h3>
+                <p>Each item below explains what needs a closer look.</p>
+              </div>
+            </div>
+            <div id="flagsList" class="flags-list"></div>
+          </div>
+
+          <div class="message-card">
+            <div class="section-head compact">
+              <div>
+                <h3>Verification message</h3>
+                <p>
+                  Copy this and send it to the employer to confirm the offer.
+                </p>
+              </div>
+            </div>
+
+            <textarea id="verificationMessage" readonly></textarea>
+
+            <div class="ai-review-box">
+              <h4>AI review</h4>
+              <textarea
+                id="aiReviewMessage"
+                readonly
+                placeholder="AI review will appear here after analysis."
+              ></textarea>
+            </div>
+
+            <div class="message-actions">
+              <button id="copyBtn" class="copy-btn">Copy Message</button>
+              <button id="downloadPdfBtn" class="pdf-btn">
+                Download PDF Report
+              </button>
+              <span id="copyStatus" class="copy-status"></span>
+            </div>
+          </div>
+
+          <button id="resetBtn" class="reset-btn">Check Another Offer</button>
+        </section>
+      </main>
+    </div>
+
+    <script src="script.js?v=2"></script>
+  </body>
+</html>
