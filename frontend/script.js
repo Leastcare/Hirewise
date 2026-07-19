@@ -24,7 +24,7 @@ let currentTheme = "dark";
 const samples = {
   fake: `Dear Candidate, Congratulations! You are selected for a Data Entry Executive role at TechGrow Solutions with salary Rs. 12,00,000 per annum. To confirm your selection, please pay a registration fee before joining. This offer is valid for the next 2 hours only. Contact: techgrow.hr@gmail.com immediately.`,
   borderline: `Dear Applicant, We are pleased to offer you the position of Junior Support Associate at BrightPath Services with annual compensation of INR 6,80,000. Please confirm your acceptance within 24 hours so that we can proceed with onboarding formalities. For any questions, contact brightpathcareers@yahoo.com. Regards, Hiring Desk, BrightPath Services.`,
-  legit: `Dear Aditi Sharma, We are pleased to offer you the position of Software Engineer at NexaSoft Technologies, Bengaluru. Your annual compensation will be INR 7,20,000 per annum, subject to standard payroll deductions and company policy. Your tentative date of joining is 12 August 2026. Please review the attached offer details and confirm your acceptance by 24 July 2026. For any questions, contact us at hr@nexasofttech.com. Best regards, Riya Mehta, HR Team, NexaSoft Technologies.`
+  legit: `Dear Aditi Sharma, We are pleased to offer you the position of Software Engineer at NexaSoft Technologies, Bengaluru. Your annual compensation will be INR 7,20,000 per annum, subject to standard payroll deductions and company policy. Your tentative date of joining is 12 August 2026. Please review the attached offer details and confirm your acceptance by 24 July 2026. For any questions, contact us at hr@nexasofttech.com. Best regards, Riya Mehta, HR Team, NexaSoft Technologies.`,
 };
 
 function setTheme(theme) {
@@ -39,9 +39,9 @@ themeToggle.addEventListener("click", () => {
     [
       { transform: "rotate(0deg)" },
       { transform: "rotate(180deg)" },
-      { transform: "rotate(0deg)" }
+      { transform: "rotate(0deg)" },
     ],
-    { duration: 320, easing: "ease-out" }
+    { duration: 320, easing: "ease-out" },
   );
 });
 
@@ -131,13 +131,22 @@ analyzeBtn.addEventListener("click", async () => {
   copyStatus.textContent = "";
 
   try {
-    const response = await fetch("http://localhost:5000/api/analyze", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
+    const response = await fetch(
+      "https://hirewise-backend-r748.onrender.com/api/analyze",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ offerText: text }),
       },
-      body: JSON.stringify({ offerText: text })
-    });
+    );
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+
+    const data = await response.json();
 
     const data = await response.json();
     latestAnalysis = data;
@@ -148,9 +157,9 @@ analyzeBtn.addEventListener("click", async () => {
     verdictBanner.animate(
       [
         { opacity: 0, transform: "translateY(8px)" },
-        { opacity: 1, transform: "translateY(0)" }
+        { opacity: 1, transform: "translateY(0)" },
       ],
-      { duration: 280, easing: "ease-out" }
+      { duration: 280, easing: "ease-out" },
     );
 
     applyScoreStyles(data.confidenceScore);
@@ -230,7 +239,9 @@ downloadPdfBtn.addEventListener("click", () => {
   lines.push(`Verdict: ${latestAnalysis.verdict.label}`);
   lines.push(`Confidence Score: ${latestAnalysis.confidenceScore}`);
   lines.push(`Detected Email: ${latestAnalysis.detectedEmail || "Not found"}`);
-  lines.push(`Detected Domain: ${latestAnalysis.detectedDomain || "Not found"}`);
+  lines.push(
+    `Detected Domain: ${latestAnalysis.detectedDomain || "Not found"}`,
+  );
   lines.push(`Risk Summary: ${getRiskSummary(latestAnalysis.confidenceScore)}`);
   lines.push("");
 
