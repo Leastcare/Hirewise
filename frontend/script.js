@@ -1,11 +1,12 @@
 // ─────────────────────────────────────────────────────────────────────────────
-// HireWise — script.js v4
+// HireWise — script.js v5
 // UI enhancements:
 //   1. Scan-line sweep on analysis start
 //   2. Radial SVG gauge (needle + arc)
 //   3. Inline phrase highlighting in offer text
 //   4. Full-page verdict colour pulse
 //   5. Flag cards as animated timeline
+//   6. Feedback widget (scam / legit) → Supabase via backend
 // ─────────────────────────────────────────────────────────────────────────────
 
 const API_BASE      = "https://hirewise-backend-r748.onrender.com";
@@ -51,8 +52,13 @@ const lstep2            = document.getElementById("lstep2");
 const lstep3            = document.getElementById("lstep3");
 const fileUploadInput   = document.getElementById("fileUpload");
 const fileUploadLabel   = document.getElementById("fileUploadLabel");
+const feedbackWidget    = document.getElementById("feedbackWidget");
+const feedbackScamBtn   = document.getElementById("feedbackScam");
+const feedbackLegitBtn  = document.getElementById("feedbackLegit");
+const feedbackStatus    = document.getElementById("feedbackStatus");
 
-let latestAnalysis = null;
+let latestAnalysis  = null;
+let feedbackSent    = false;
 let currentTheme   = "dark";
 let backendReady   = false;
 
@@ -403,6 +409,12 @@ function renderResults(data, originalText) {
   detectedDomainVal.textContent = data.detectedDomain || "Not detected";
   riskSummaryVal.textContent    = getRiskSummary(data.confidenceScore);
 
+  // Show domain age if available
+  if (data.domainAgeMonths !== null && data.domainAgeMonths !== undefined) {
+    detectedDomainVal.textContent =
+      `${data.detectedDomain} (${data.domainAgeMonths}mo old)`;
+  }
+
   // 5. Timeline flags with stagger
   flagsList.innerHTML = "";
   if (!data.flags || data.flags.length === 0) {
@@ -432,7 +444,59 @@ function renderResults(data, originalText) {
     clearHighlights();
     setTimeout(() => applyHighlights(originalText), 600);
   }
+
+  // 6. Feedback widget — show after results, reset state
+  feedbackSent = false;
+  if (feedbackWidget) {
+    feedbackWidget.classList.remove("hidden", "fw-done");
+    if (feedbackScamBtn)  feedbackScamBtn.disabled  = false;
+    if (feedbackLegitBtn) feedbackLegitBtn.disabled = false;
+    if (feedbackStatus)   feedbackStatus.textContent = "";
+  }
 }
+
+// ─────────────────────────────────────────────────────────────────────────────
+// FEATURE 6 — Feedback submission
+// ─────────────────────────────────────────────────────────────────────────────
+async function submitFeedback(isScam) {
+  if (feedbackSent || !latestAnalysis) return;
+  feedbackSent = true;
+
+  if (feedbackScamBtn)  feedbackScamBtn.disabled  = true;
+  if (feedbackLegitBtn) feedbackLegitBtn.disabled = true;
+  if (feedbackStatus)   feedbackStatus.textContent = "Saving…";
+
+  try {
+    const resp = await fetch(`${API_BASE}/api/feedback`, {
+      method:  "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        analysisId:     latestAnalysis.analysisId || "",
+        isScam:         isScam,
+        verdict:        latestAnalysis.verdict?.color || "",
+        score:          latestAnalysis.confidenceScore || 0,
+        detectedDomain: latestAnalysis.detectedDomain || "",
+        flagsCount:     (latestAnalysis.flags || []).length,
+        aiSignal:       latestAnalysis.aiSignal || "",
+        offerSnippet:   (offerText.value || "").slice(0, 200),
+      }),
+    });
+
+    if (resp.ok) {
+      if (feedbackStatus) feedbackStatus.textContent = "✓ Thank you — your feedback helps improve accuracy.";
+      if (feedbackWidget)  feedbackWidget.classList.add("fw-done");
+    } else {
+      if (feedbackStatus) feedbackStatus.textContent = "Could not save feedback right now.";
+      feedbackSent = false;
+    }
+  } catch {
+    if (feedbackStatus) feedbackStatus.textContent = "Could not reach server.";
+    feedbackSent = false;
+  }
+}
+
+if (feedbackScamBtn)  feedbackScamBtn.addEventListener("click",  () => submitFeedback(true));
+if (feedbackLegitBtn) feedbackLegitBtn.addEventListener("click", () => submitFeedback(false));
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Analyze
@@ -619,6 +683,7 @@ resetBtn.addEventListener("click", () => {
   riskSummaryVal.textContent    = "—";
   copyStatus.textContent = "";
   if (highlightNotice) highlightNotice.classList.add("hidden");
+  if (feedbackWidget)  feedbackWidget.classList.add("hidden");
   if (fileUploadLabel) fileUploadLabel.textContent = "Upload .pdf or .txt";
   latestAnalysis = null;
   offerText.focus();

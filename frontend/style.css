@@ -1451,3 +1451,94 @@ body.light .chip-safe  { color: var(--green-deep); }
   }
   .orb, .verdict-pulse, .scan-line, .eyebrow-dot, .live-dot, .status-dot { animation: none !important; }
 }
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   Feedback widget
+───────────────────────────────────────────────────────────────────────────── */
+.feedback-widget {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 20px 22px;
+  margin-bottom: 20px;
+  background: var(--panel-2);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--r-lg);
+  animation: fadeUp 320ms var(--ease) both;
+}
+
+.fw-question {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.fw-icon {
+  font-size: 18px;
+  line-height: 1;
+}
+
+.fw-text {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.fw-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.fw-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 9px 18px;
+  border-radius: var(--r-sm);
+  border: 1px solid var(--border);
+  background: var(--bg-soft);
+  color: var(--text);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s var(--ease);
+}
+
+.fw-btn-scam:hover:not(:disabled) {
+  background: var(--red-soft);
+  border-color: var(--red-border);
+  color: var(--red);
+  transform: translateY(-1px);
+}
+
+.fw-btn-legit:hover:not(:disabled) {
+  background: var(--green-soft);
+  border-color: var(--green-border);
+  color: var(--green);
+  transform: translateY(-1px);
+}
+
+.fw-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.fw-status {
+  margin: 0;
+  font-size: 12.5px;
+  color: var(--green);
+  font-weight: 500;
+  min-height: 18px;
+}
+
+.feedback-widget.fw-done {
+  border-color: var(--green-border);
+  background: var(--green-soft);
+}
+
+.feedback-widget.fw-done .fw-text {
+  color: var(--green);
+}

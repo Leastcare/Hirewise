@@ -88,7 +88,7 @@
               </div>
               <div class="stat-divider" aria-hidden="true"></div>
               <div class="stat-item">
-                <span class="stat-num">5+</span>
+                <span class="stat-num">7+</span>
                 <span class="stat-label">Risk signals</span>
               </div>
               <div class="stat-divider" aria-hidden="true"></div>
@@ -119,6 +119,14 @@
               <li>
                 <span class="check-icon check-warn" aria-hidden="true">◎</span>
                 Suspicious hiring phrases
+              </li>
+              <li>
+                <span class="check-icon check-risk" aria-hidden="true">⚠</span>
+                Known scam domain blocklist
+              </li>
+              <li>
+                <span class="check-icon check-warn" aria-hidden="true">◎</span>
+                Recently registered domains (WHOIS)
               </li>
               <li>
                 <span class="check-icon check-ok" aria-hidden="true">✓</span>
@@ -326,6 +334,29 @@
             <div id="flagsList" class="flags-timeline" role="list"></div>
           </div>
 
+          <!-- Feedback widget -->
+          <div id="feedbackWidget" class="feedback-widget hidden" aria-label="Was this analysis correct?">
+            <div class="fw-question">
+              <span class="fw-icon" aria-hidden="true">🎯</span>
+              <span class="fw-text">Was this result accurate for your offer?</span>
+            </div>
+            <div class="fw-actions">
+              <button id="feedbackScam" class="fw-btn fw-btn-scam" aria-label="Yes, this was a scam">
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+                  <path d="M7 1L8.5 5h4.5L9.5 7.5l1.5 4L7 9.5 3 11.5l1.5-4L1 5h4.5z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/>
+                </svg>
+                Yes, it was a scam
+              </button>
+              <button id="feedbackLegit" class="fw-btn fw-btn-legit" aria-label="No, this was a legitimate offer">
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+                  <path d="M2.5 7L5.5 10L11.5 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                No, it was legit
+              </button>
+            </div>
+            <p id="feedbackStatus" class="fw-status" aria-live="polite"></p>
+          </div>
+
           <!-- Verification + AI -->
           <div class="message-card">
             <div class="mc-header">
@@ -377,6 +408,6 @@
       </main>
     </div>
 
-    <script src="script.js?v=4"></script>
+    <script src="script.js?v=5"></script>
   </body>
 </html>

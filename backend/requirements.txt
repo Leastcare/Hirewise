@@ -7,3 +7,5 @@ scikit-learn==1.9.0
 requests==2.34.2
 pdfminer.six==20231228
 openpyxl==3.1.5
+supabase==2.15.1
+python-whois==0.9.5
