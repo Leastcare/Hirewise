@@ -3,12 +3,12 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>HireWise</title>
+    <title>HireWise — Job Offer Safety Check</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Instrument+Serif&family=Manrope:wght@400;500;600;700;800&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap"
       rel="stylesheet"
     />
 
@@ -16,212 +16,367 @@
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
-    <div class="ambient ambient-a"></div>
-    <div class="ambient ambient-b"></div>
+
+    <!-- Background grid + noise overlay -->
+    <div class="bg-grid" aria-hidden="true"></div>
+    <div class="bg-noise" aria-hidden="true"></div>
+
+    <!-- Floating orbs -->
+    <div class="orb orb-1" aria-hidden="true"></div>
+    <div class="orb orb-2" aria-hidden="true"></div>
+    <div class="orb orb-3" aria-hidden="true"></div>
+
+    <!-- Verdict background pulse (fills entire viewport on result) -->
+    <div id="verdictPulse" class="verdict-pulse" aria-hidden="true"></div>
 
     <div class="shell">
+
+      <!-- ── Topbar ─────────────────────────────────────────────────── -->
       <header class="topbar">
         <div class="brand">
-          <div class="brand-mark" aria-hidden="true"><span></span></div>
+          <div class="brand-shield" aria-hidden="true">
+            <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
+              <path d="M11 2L3 5.5V11C3 15.4 6.4 19.6 11 21C15.6 19.6 19 15.4 19 11V5.5L11 2Z" fill="url(#sg)" stroke="rgba(255,255,255,0.15)" stroke-width="0.5"/>
+              <path d="M8 11L10 13L14 9" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+              <defs>
+                <linearGradient id="sg" x1="3" y1="2" x2="19" y2="21" gradientUnits="userSpaceOnUse">
+                  <stop stop-color="#f97316"/>
+                  <stop offset="1" stop-color="#dc2626"/>
+                </linearGradient>
+              </defs>
+            </svg>
+          </div>
           <div class="brand-copy">
             <strong>HireWise</strong>
-            <small>Offer verification assistant</small>
+            <small>Offer safety scanner</small>
           </div>
         </div>
 
-        <button id="themeToggle" class="theme-toggle" aria-label="Toggle theme">
-          ◐
-        </button>
+        <div class="topbar-right">
+          <div class="status-dot-wrap">
+            <span class="status-dot" id="backendDot" aria-hidden="true"></span>
+            <span class="status-dot-label" id="backendStatus">Connecting…</span>
+          </div>
+          <button id="themeToggle" class="theme-toggle" aria-label="Toggle theme">
+            <span id="themeIcon">◐</span>
+          </button>
+        </div>
       </header>
 
       <main class="layout">
-        <section class="hero-card">
+
+        <!-- ── Hero ──────────────────────────────────────────────────── -->
+        <section class="hero-card" aria-labelledby="heroHeading">
           <div class="hero-copy">
-            <span class="eyebrow">Job offer safety</span>
-            <h1>Check the offer<br /> before you trust it.</h1>
-            <p>
-              Spot suspicious hiring patterns, review the risk clearly, and
-              generate a professional verification message before you share
-              documents or money.
+            <div class="eyebrow-wrap">
+              <span class="eyebrow-dot" aria-hidden="true"></span>
+              <span class="eyebrow">Powered by ML + AI</span>
+            </div>
+            <h1 id="heroHeading">
+              Scan any offer.<br />
+              <span class="headline-accent">Know the risk.</span>
+            </h1>
+            <p class="hero-sub">
+              Paste a job offer and HireWise runs it through a trained scam
+              detector, rule engine, and AI review — in seconds.
             </p>
 
-            <div class="hero-points">
-              <div class="point">
-                <strong>Detect risk signals</strong>
-                <span
-                  >Flags payment requests, urgency language, and suspicious
-                  domains.</span
-                >
+            <div class="hero-stats">
+              <div class="stat-item">
+                <span class="stat-num">3</span>
+                <span class="stat-label">Detection layers</span>
               </div>
-              <div class="point">
-                <strong>Understand the result</strong>
-                <span
-                  >See score, verdict, and a simple explanation of what was
-                  found.</span
-                >
+              <div class="stat-divider" aria-hidden="true"></div>
+              <div class="stat-item">
+                <span class="stat-num">5+</span>
+                <span class="stat-label">Risk signals</span>
               </div>
-              <div class="point">
-                <strong>Verify quickly</strong>
-                <span
-                  >Copy a ready-to-send message and confirm directly with the
-                  employer.</span
-                >
+              <div class="stat-divider" aria-hidden="true"></div>
+              <div class="stat-item">
+                <span class="stat-num">0₹</span>
+                <span class="stat-label">Cost to you</span>
               </div>
             </div>
           </div>
 
-          <aside class="trust-panel">
-            <div class="mini-stat">
-              <span class="mini-label">Purpose</span>
-              <strong>Reduce scam risk</strong>
+          <aside class="hero-checks" aria-label="What HireWise checks">
+            <div class="check-header">
+              <span class="check-title">Detection coverage</span>
             </div>
-            <div class="trust-box">
-              <span class="card-topline">What it checks</span>
-              <ul>
-                <li>Upfront fee requests</li>
-                <li>Pressure tactics</li>
-                <li>Generic greetings</li>
-                <li>Unofficial email domains</li>
-              </ul>
-            </div>
+            <ul class="check-list">
+              <li>
+                <span class="check-icon check-risk" aria-hidden="true">⚠</span>
+                Upfront fee &amp; payment requests
+              </li>
+              <li>
+                <span class="check-icon check-risk" aria-hidden="true">⚠</span>
+                Urgency &amp; pressure tactics
+              </li>
+              <li>
+                <span class="check-icon check-warn" aria-hidden="true">◎</span>
+                Public / personal email domains
+              </li>
+              <li>
+                <span class="check-icon check-warn" aria-hidden="true">◎</span>
+                Suspicious hiring phrases
+              </li>
+              <li>
+                <span class="check-icon check-ok" aria-hidden="true">✓</span>
+                Legitimacy signals &amp; structure
+              </li>
+              <li>
+                <span class="check-icon check-ok" aria-hidden="true">✓</span>
+                AI narrative review
+              </li>
+            </ul>
           </aside>
         </section>
 
+        <!-- ── Input workspace ──────────────────────────────────────── -->
         <section class="workspace">
           <div class="input-panel">
-            <div class="section-head">
+            <div class="input-header">
               <div>
                 <h2>Paste your offer letter</h2>
-                <p>
-                  Paste the full message or offer text below to scan for common
-                  fraud signals.
-                </p>
+                <p>Full offer text gives more accurate results.</p>
               </div>
-              <span class="status-pill">Live analysis</span>
+              <span class="live-pill" aria-label="Live analysis mode">
+                <span class="live-dot" aria-hidden="true"></span>
+                Live
+              </span>
             </div>
 
-            <textarea
-              id="offerText"
-              placeholder="Paste the offer letter here..."
-            ></textarea>
-
-            <div class="sample-buttons">
-              <button class="sample-btn" data-type="fake">Fake Offer</button>
-              <button class="sample-btn" data-type="borderline">
-                Borderline
-              </button>
-              <button class="sample-btn" data-type="legit">Legit Offer</button>
+            <!-- Upload -->
+            <div class="upload-row">
+              <label class="upload-btn" for="fileUpload" id="fileUploadLabel">
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+                  <path d="M7 1v8M4 4l3-3 3 3M2 11h10" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                Upload .pdf or .txt
+              </label>
+              <input type="file" id="fileUpload" accept=".pdf,.txt" class="visually-hidden" aria-label="Upload offer letter file" />
             </div>
 
-            <button id="analyzeBtn" class="analyze-btn">Analyze Offer</button>
-            <p class="inline-note">
-              Use sample letters if you want to test the UI quickly.
-            </p>
+            <!-- Scan container: wraps textarea + scan-line overlay -->
+            <div class="scan-container" id="scanContainer">
+              <textarea
+                id="offerText"
+                placeholder="Dear [Name], We are pleased to offer you the position of…"
+                aria-label="Offer letter text"
+                maxlength="10000"
+                spellcheck="false"
+              ></textarea>
+              <!-- Scan line — active during analysis -->
+              <div class="scan-line" id="scanLine" aria-hidden="true"></div>
+              <!-- Highlight overlay — shown after analysis -->
+              <div class="highlight-overlay" id="highlightOverlay" aria-hidden="true"></div>
+            </div>
+
+            <div class="input-footer">
+              <span id="charCount" class="char-count">0 / 10,000</span>
+              <div class="sample-buttons">
+                <button class="sample-btn" data-type="fake" aria-label="Load fake offer sample">Fake</button>
+                <button class="sample-btn sample-mid" data-type="borderline" aria-label="Load borderline offer sample">Borderline</button>
+                <button class="sample-btn sample-legit" data-type="legit" aria-label="Load legitimate offer sample">Legit</button>
+              </div>
+            </div>
+
+            <button id="analyzeBtn" class="analyze-btn" aria-label="Run scam analysis on the offer text">
+              <svg class="btn-icon" width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true">
+                <circle cx="8" cy="8" r="5.5" stroke="currentColor" stroke-width="1.6"/>
+                <path d="M12.5 12.5L16 16" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+                <path d="M6 8h4M8 6v4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
+              </svg>
+              Analyze Offer
+            </button>
+            <p class="inline-note">No data is stored. Analysis happens in real time.</p>
           </div>
 
           <aside class="side-panel">
             <div class="tip-card">
-              <span class="tip-kicker">Quick advice</span>
+              <div class="tip-icon-row" aria-hidden="true">
+                <span class="tip-icon tip-red">₹</span>
+              </div>
+              <span class="tip-kicker">Red flag #1</span>
               <h3>Never pay to get hired</h3>
               <p>
-                Real employers do not ask candidates to pay security deposits,
-                registration fees, or laptop fees before joining.
+                Legitimate employers never ask for registration fees, security deposits,
+                or laptop fees before your first day.
               </p>
             </div>
 
-            <div class="tip-card subtle">
-              <span class="tip-kicker">Before you accept</span>
-              <h3>Verify with the company</h3>
+            <div class="tip-card tip-card-alt">
+              <div class="tip-icon-row" aria-hidden="true">
+                <span class="tip-icon tip-blue">@</span>
+              </div>
+              <span class="tip-kicker">Red flag #2</span>
+              <h3>Check the email domain</h3>
               <p>
-                Match the sender email with the company domain and confirm the
-                offer using a number or email listed on the official website.
+                Real companies use their own domain (e.g. hr@company.com).
+                Gmail, Yahoo, or Hotmail senders are a warning sign.
               </p>
             </div>
           </aside>
         </section>
 
-        <section id="loadingState" class="loading hidden">
-          <div class="spinner"></div>
-          <p>Scanning the letter for red flags...</p>
+        <!-- ── Session history ──────────────────────────────────────── -->
+        <section id="historyPanel" class="history-panel hidden" aria-label="Previous analyses this session">
+          <div class="history-head">
+            <span class="history-title">This session</span>
+            <span class="history-hint">Click to reload a result</span>
+          </div>
+          <div id="historyList" class="history-list"></div>
         </section>
 
-        <section id="resultsSection" class="results hidden">
-          <div id="verdictBanner" class="verdict-banner"></div>
+        <!-- ── Loading state ────────────────────────────────────────── -->
+        <section id="loadingState" class="loading hidden" aria-live="polite" aria-label="Loading">
+          <div class="scan-spinner" aria-hidden="true">
+            <svg class="spinner-ring" viewBox="0 0 60 60">
+              <circle class="ring-track" cx="30" cy="30" r="24"/>
+              <circle class="ring-progress" cx="30" cy="30" r="24"/>
+            </svg>
+            <span class="spinner-shield" aria-hidden="true">
+              <svg width="20" height="20" viewBox="0 0 22 22" fill="none">
+                <path d="M11 2L3 5.5V11C3 15.4 6.4 19.6 11 21C15.6 19.6 19 15.4 19 11V5.5L11 2Z" fill="url(#sg2)"/>
+                <defs>
+                  <linearGradient id="sg2" x1="3" y1="2" x2="19" y2="21">
+                    <stop stop-color="#f97316"/><stop offset="1" stop-color="#dc2626"/>
+                  </linearGradient>
+                </defs>
+              </svg>
+            </span>
+          </div>
+          <p id="loadingMsg" class="loading-msg">Scanning the letter for risk signals…</p>
+          <div class="loading-steps" aria-hidden="true">
+            <span class="lstep active" id="lstep1">ML model</span>
+            <span class="lstep-sep">→</span>
+            <span class="lstep" id="lstep2">Rule engine</span>
+            <span class="lstep-sep">→</span>
+            <span class="lstep" id="lstep3">AI review</span>
+          </div>
+        </section>
 
+        <!-- ── Results ──────────────────────────────────────────────── -->
+        <section id="resultsSection" class="results hidden" aria-label="Analysis results">
+
+          <!-- Verdict banner -->
+          <div id="verdictBanner" class="verdict-banner" role="status" aria-live="assertive"></div>
+
+          <!-- Score + summary row -->
           <div class="results-top">
-            <div id="scoreCard" class="score-card">
+
+            <!-- Radial gauge -->
+            <div class="gauge-card" id="gaugeCard" aria-label="Risk confidence score">
               <span class="card-topline">Confidence score</span>
-              <div id="scoreValue" class="score-value">--</div>
-              <div class="meter">
-                <div id="scoreFill" class="meter-fill"></div>
+              <div class="gauge-wrap" role="img" aria-label="Score gauge">
+                <svg class="gauge-svg" viewBox="0 0 200 130" aria-hidden="true">
+                  <!-- Track arc -->
+                  <path class="gauge-track" d="M20 110 A 80 80 0 0 1 180 110" fill="none" stroke-width="14" stroke-linecap="round"/>
+                  <!-- Value arc — stroke-dashoffset animated by JS -->
+                  <path id="gaugeArc" class="gauge-arc" d="M20 110 A 80 80 0 0 1 180 110" fill="none" stroke-width="14" stroke-linecap="round"/>
+                  <!-- Needle -->
+                  <g id="gaugeNeedle" class="gauge-needle-g" transform-origin="100 110">
+                    <line class="gauge-needle" x1="100" y1="110" x2="100" y2="38"/>
+                    <circle class="gauge-needle-hub" cx="100" cy="110" r="7"/>
+                  </g>
+                  <!-- Labels -->
+                  <text x="18" y="128" class="gauge-label">0</text>
+                  <text x="178" y="128" class="gauge-label" text-anchor="end">100</text>
+                </svg>
+                <div class="gauge-center">
+                  <div id="scoreValue" class="score-value">--</div>
+                  <div id="scoreRing" class="score-ring-label">—</div>
+                </div>
               </div>
-              <p id="scoreLabel" class="score-label">Waiting for analysis...</p>
+              <p id="scoreLabel" class="score-label">Waiting for analysis…</p>
             </div>
 
+            <!-- Summary -->
             <div class="summary-card">
-              <span class="card-topline">Summary</span>
-              <h3>Quick view</h3>
-
-              <div class="summary-row">
-                <span>Detected email</span>
-                <strong id="detectedEmailValue">—</strong>
-              </div>
-              <div class="summary-row">
-                <span>Detected domain</span>
-                <strong id="detectedDomainValue">—</strong>
-              </div>
-              <div class="summary-row">
-                <span>Risk summary</span>
-                <strong id="riskSummaryValue">—</strong>
+              <span class="card-topline">Quick summary</span>
+              <div class="summary-rows">
+                <div class="summary-row">
+                  <span class="sr-label">Detected email</span>
+                  <strong id="detectedEmailValue" class="sr-value">—</strong>
+                </div>
+                <div class="summary-row">
+                  <span class="sr-label">Detected domain</span>
+                  <strong id="detectedDomainValue" class="sr-value">—</strong>
+                </div>
+                <div class="summary-row">
+                  <span class="sr-label">Risk level</span>
+                  <strong id="riskSummaryValue" class="sr-value">—</strong>
+                </div>
               </div>
             </div>
           </div>
 
+          <!-- Inline highlight notice -->
+          <div id="highlightNotice" class="highlight-notice hidden">
+            <span class="hn-icon" aria-hidden="true">✦</span>
+            Risky phrases are highlighted in the offer text above. Scroll up to see them.
+          </div>
+
+          <!-- Flags timeline -->
           <div class="flags-wrap">
-            <div class="section-head compact">
-              <div>
-                <h3>Detected red flags</h3>
-                <p>Each item below explains what needs a closer look.</p>
-              </div>
+            <div class="flags-header">
+              <h3>Signal breakdown</h3>
+              <p>Risk signals are ordered by severity.</p>
             </div>
-            <div id="flagsList" class="flags-list"></div>
+            <div id="flagsList" class="flags-timeline" role="list"></div>
           </div>
 
+          <!-- Verification + AI -->
           <div class="message-card">
-            <div class="section-head compact">
-              <div>
-                <h3>Verification message</h3>
-                <p>
-                  Copy this and send it to the employer to confirm the offer.
-                </p>
-              </div>
+            <div class="mc-header">
+              <h3>Verification message</h3>
+              <p>Send this to the employer to confirm authenticity.</p>
             </div>
-
-            <textarea id="verificationMessage" readonly></textarea>
+            <textarea id="verificationMessage" readonly aria-label="Verification message to send to employer"></textarea>
 
             <div class="ai-review-box">
-              <h4>Final Verdict</h4>
+              <div class="ai-badge" aria-hidden="true">
+                <svg width="13" height="13" viewBox="0 0 16 16" fill="none">
+                  <circle cx="8" cy="8" r="7" stroke="currentColor" stroke-width="1.2"/>
+                  <path d="M5 8.5L7 10.5L11 6" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                AI Review
+              </div>
               <textarea
                 id="aiReviewMessage"
                 readonly
                 placeholder="AI review will appear here after analysis."
+                aria-label="AI-generated review of the offer"
               ></textarea>
             </div>
 
             <div class="message-actions">
-              <button id="copyBtn" class="copy-btn">Copy Message</button>
-              <button id="downloadPdfBtn" class="pdf-btn">
-                Download PDF Report
+              <button id="copyBtn" class="copy-btn">
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+                  <rect x="5" y="5" width="8" height="8" rx="1.5" stroke="currentColor" stroke-width="1.3"/>
+                  <path d="M9 5V3a1 1 0 0 0-1-1H3a1 1 0 0 0-1 1v5a1 1 0 0 0 1 1h2" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
+                </svg>
+                Copy Message
               </button>
-              <span id="copyStatus" class="copy-status"></span>
+              <button id="downloadPdfBtn" class="pdf-btn">
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+                  <path d="M7 1v8M4 6l3 3 3-3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+                  <path d="M2 11h10" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+                </svg>
+                Download PDF
+              </button>
+              <span id="copyStatus" class="copy-status" aria-live="polite"></span>
             </div>
           </div>
 
-          <button id="resetBtn" class="reset-btn">Check Another Offer</button>
+          <button id="resetBtn" class="reset-btn" aria-label="Start a new analysis">
+            ↩ Check Another Offer
+          </button>
         </section>
+
       </main>
     </div>
 
-    <script src="script.js?v=2"></script>
+    <script src="script.js?v=4"></script>
   </body>
 </html>
